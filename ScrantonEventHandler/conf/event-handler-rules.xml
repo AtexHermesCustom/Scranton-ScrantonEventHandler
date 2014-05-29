@@ -1,0 +1,23 @@
+<InvokeRules>
+<!-- ##################### -->
+<!-- rules for page events -->
+<!-- ##################### -->
+<PageFullRule name="Page_Change_Status">
+ <EventID value="34"/> <!-- ## Change page status ## -->
+ <StatusesList value="18" /> <!-- 18=PG_READY -->
+ <Handlerclass value="com.atex.h11.custom.scranton.event.CustomPageEventHandler"/>
+</PageFullRule>
+
+
+<!-- ####################### -->
+<!-- rules for object events -->
+<!-- ####################### -->
+<ObjectFullRule name="Object_Save">
+ <EventID value="5"/> <!-- ## Save object ## -->
+ <ObjectInPage value ="ALL"/>
+ <ObjTypeList value ="17" /> <!-- 17=story package -->
+ <StatusesList value="52,53" /> <!-- 52=WEB_NOW, 53=WEB_READY -->
+ <Handlerclass value="com.atex.h11.custom.scranton.event.CustomObjectEventHandler"/>
+</ObjectFullRule>
+
+</InvokeRules>

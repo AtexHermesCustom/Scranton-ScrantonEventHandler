@@ -1,0 +1,55 @@
+<InvokeRules>
+<!-- ##################### -->
+<!-- rules for page events -->
+<!-- ##################### -->
+<PageRule name="Page_1">
+ <EventID value="31"/> <!-- ## Create page ## -->
+ <StatusesList value="ALL" />
+ <Handlerclass value="com.atex.custom.event.CustomPageEventHandler"/>
+</PageRule>
+
+<PageFullRule name="Page_2">
+ <EventID value="34"/> <!-- ## Change status page ## -->
+ <StatusesList value="ALL" />
+ <Handlerclass value="com.atex.custom.event.CustomPageEventHandler"/>
+</PageFullRule>
+
+<PageFullRule name="Page_3">
+ <EventID value="37"/> <!-- ## Move page ## -->
+ <StatusesList value="ALL" />
+ <Handlerclass value="com.atex.custom.event.CustomPageEventHandler"/>
+</PageFullRule>
+
+<!-- ####################### -->
+<!-- rules for object events -->
+<!-- ####################### -->
+<ObjectFullRule name="Object_1">
+ <EventID value="5"/> <!-- ## Save object ## -->
+ <ObjectInPage value ="ALL"/>
+ <ObjTypeList value ="ALL" />
+ <Handlerclass value="com.atex.custom.event.CustomObjectEventHandler"/>
+</ObjectFullRule>
+
+<ObjectFullRule name="Object_2">
+ <EventID value="8"/> <!-- ## Link object ## -->
+ <Handlerclass value="com.atex.custom.event.CustomObjectEventHandler"/>
+</ObjectFullRule>
+
+<ObjectFullRule name="Object_3">
+ <EventID value="10"/> <!-- ## Move object ## -->
+ <Handlerclass value="com.atex.custom.event.CustomObjectEventHandler"/>
+</ObjectFullRule>
+
+<ObjectMultilinkRule name="Object_4">
+ <EventID value="6"/> <!-- ## Lock object ## -->
+ <Handlerclass value="com.atex.custom.event.CustomObjectEventHandler"/>
+</ObjectMultilinkRule>
+
+<ObjectMultilinkRule name="Object_5">
+ <EventID value="7"/> <!-- ## Unlock object ## -->
+ <ObjectInPage value ="ALL"/>
+ <ObjTypeList value ="5" />
+ <Handlerclass value="com.atex.custom.event.CustomObjectEventHandler"/>
+</ObjectMultilinkRule>
+
+</InvokeRules>

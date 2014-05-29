@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	List of levels for export
+
+	History:
+	20140312 	Atex 	creation
+-->
+<levels>
+	<!-- 
+			Samples:
+			<level>SC_TIMES_TRIB/NEWS/STORIES</level>	- specific level
+			<level>SC_TIMES_TRIB/NEWS</level>			- all levels under NEWS will be included
+			<level>SC_TIMES_TRIB</level> 				- all levels under the SC_TIMES_TRIB will be included
+	-->
+	<level>SC_TIMES_TRIB/NEWS/STORIES</level>
+	<level>SC_TIMES_TRIB/LOCAL/STORIES</level>
+</levels>
