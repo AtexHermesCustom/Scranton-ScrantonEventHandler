@@ -31,7 +31,7 @@ public class Config {
 	private static INCMMetadataNodeManager metaMgr = null;
 	
 	public Config() {
-
+		// none
 	}
 	
 	public static void Initialize(IDataSource ds)
