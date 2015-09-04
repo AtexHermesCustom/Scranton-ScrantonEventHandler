@@ -25,10 +25,12 @@ import com.unisys.media.cr.common.web.data.values.WebObjectNodeValue;
 import com.unisys.media.extension.common.exception.NodeAlreadyLockedException;
 import com.unisys.media.ncm.cfg.common.data.values.MetadataSchemaValue;
 import com.unisys.media.ncm.cfg.model.values.UserHermesCfgValueClient;
+
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Vector;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -36,6 +38,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -396,6 +399,17 @@ public class PackageWebHandler {
 		}
 	}	
 	
+	private int getDelaySeconds() {
+		int delaySec = 0;
+		
+		String delayProp = Config.getProperty("delay.package.mode");
+		if (!delayProp.isEmpty() && delayProp.matches("^\\d+$")) {
+			delaySec = Integer.parseInt(delayProp);
+		}
+		
+		return delaySec;
+	}
+	
 	public int sendToWeb() 
 			throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
 		logger.info("sendToWeb: Package [" + pkgId + "," + pkgName + "]. expMode=" + expMode.toString());
@@ -413,6 +427,18 @@ public class PackageWebHandler {
 				return -1;
 			}
 		}		
+		
+		if (expMode.equals(ExportMode.PACKAGE)) {	// PAGE export mode would have started the delay in the LogPageWebHandler class
+			int delaySec = getDelaySeconds();
+			if (delaySec > 0) {			
+				logger.debug("Delay for " + delaySec + " seconds...");
+				try {
+					Thread.sleep(delaySec * 1000);
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+				}
+			}
+		}
 		
 		// determine whether the package is paginated or not
 		// channel name matches the metadata group name for the PUBLISH_STATE metadata field

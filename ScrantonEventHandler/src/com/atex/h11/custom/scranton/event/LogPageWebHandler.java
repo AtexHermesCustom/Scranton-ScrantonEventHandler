@@ -10,6 +10,7 @@ import com.unisys.media.cr.adapter.ncm.model.data.datasource.NCMDataSource;
 import com.unisys.media.cr.adapter.ncm.model.data.values.NCMLogicalPageValueClient;
 import com.unisys.media.cr.adapter.ncm.model.data.values.NCMObjectValueClient;
 import com.unisys.media.ncm.cfg.model.values.UserHermesCfgValueClient;
+
 import org.apache.log4j.Logger;
 
 public class LogPageWebHandler {
@@ -34,6 +35,17 @@ public class LogPageWebHandler {
 		}
 	}
 	
+	private int getDelaySeconds() {
+		int delaySec = 0;
+		
+		String delayProp = Config.getProperty("delay.page.mode");
+		if (!delayProp.isEmpty() && delayProp.matches("^\\d+$")) {
+			delaySec = Integer.parseInt(delayProp);
+		}		
+		
+		return delaySec;
+	}	
+	
 	public void sendPackagesToWeb()
 			throws RemoteException {	
 		logger.info("sendPackagesToWeb: Page [" + pageId + "," + pageName + "]");
@@ -47,6 +59,16 @@ public class LogPageWebHandler {
 		props.setIncludeLayContent(true);
 		NCMDataSource hermesDS = Config.getHermesDataSource();
 		NCMLogicalPageValueClient lpVC = (NCMLogicalPageValueClient) hermesDS.getNode(lpPK, props);
+		
+		int delaySec = getDelaySeconds();
+		if (delaySec > 0) {
+			logger.debug("Delay for " + delaySec + " seconds...");
+			try {
+				Thread.sleep(delaySec * 1000);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
+		}
 		
 		// loop through all layouts
 		if (lpVC.getLayouts().length > 0) {
