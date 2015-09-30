@@ -232,6 +232,8 @@ public class PackageWebHandler {
 					logger.debug("handleCaptions: Delete [" + ((NCMObjectPK)destVars.get(j).getPK()).getObjId() + "," + destVars.get(j).getNCMName() + "] " + 
 						destVarName + " variant.");
 					if (objMgr.isLocked(destVars.get(j).getPK())) {
+						logger.debug("handleCaptions: Unlock then delete [" + ((NCMObjectPK)destVars.get(j).getPK()).getObjId() + "," + destVars.get(j).getNCMName() + "] " + 
+								destVarName + " variant.");
 						destVars.get(j).unlock(true);	// force unlock
 					}
 					objMgr.deleteNode(destVars.get(j).getPK());
