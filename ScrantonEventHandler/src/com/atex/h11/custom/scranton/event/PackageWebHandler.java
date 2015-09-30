@@ -22,6 +22,7 @@ import com.unisys.media.cr.common.data.interfaces.IUrlNode;
 import com.unisys.media.cr.common.data.values.Journal;
 import com.unisys.media.cr.common.web.business.interfaces.IWebObjectNodeManager;
 import com.unisys.media.cr.common.web.data.values.WebObjectNodeValue;
+import com.unisys.media.extension.common.exception.MediaException;
 import com.unisys.media.extension.common.exception.NodeAlreadyLockedException;
 import com.unisys.media.ncm.cfg.common.data.values.MetadataSchemaValue;
 import com.unisys.media.ncm.cfg.model.values.UserHermesCfgValueClient;
@@ -163,7 +164,7 @@ public class PackageWebHandler {
 	}	
 	
 	private void handleCaptions()
-			throws RemoteException {
+			throws RemoteException, MediaException {
 		NCMObjectValueClient sp = getPackage();		
 		NCMDataSource ds = Config.getHermesDataSource();		
 		INCMObjectExtNodeManager objMgr = ds.getObjectManager();
@@ -230,6 +231,9 @@ public class PackageWebHandler {
 				for (int j = 0; j < destVars.size(); j++) {
 					logger.debug("handleCaptions: Delete [" + ((NCMObjectPK)destVars.get(j).getPK()).getObjId() + "," + destVars.get(j).getNCMName() + "] " + 
 						destVarName + " variant.");
+					if (objMgr.isLocked(destVars.get(j).getPK())) {
+						destVars.get(j).unlock(true);	// force unlock
+					}
 					objMgr.deleteNode(destVars.get(j).getPK());
 				}
 				
@@ -413,7 +417,7 @@ public class PackageWebHandler {
 	}
 	
 	public int sendToWeb() 
-			throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
+			throws ParserConfigurationException, SAXException, IOException, XPathExpressionException, MediaException {
 		logger.info("sendToWeb: Package [" + pkgId + "," + pkgName + "]. expMode=" + expMode.toString());
 		
 		if (Config.getProperty("check.for.web").equalsIgnoreCase("true")) {
