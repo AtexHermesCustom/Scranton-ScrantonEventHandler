@@ -85,6 +85,7 @@ public class PackageWebHandler {
 		return sp.getLayout();
 	}
 	
+	/* not used
 	private int getObjIdFromPK(INodePK pk) {
 		String s = pk.toString();
 		int delimIdx = s.indexOf(":");
@@ -92,6 +93,7 @@ public class PackageWebHandler {
 			s = s.substring(0, delimIdx);
 		return Integer.parseInt(s);
 	}
+	*/
 		
 	private boolean isForWeb() {
 		// perform check if package is meant for web:
@@ -108,7 +110,7 @@ public class PackageWebHandler {
 					String[] checks = checkValues.split(",");
 					for (int i = 0; i < checks.length; i++) {
 						if (value.equalsIgnoreCase(checks[i])) {
-							logger.debug("Package [" + getObjIdFromPK(sp.getPK()) + "," + sp.getNCMName() + "] will not be sent to web. Metadata: " + 
+							logger.debug("Package [" + ((NCMObjectPK)sp.getPK()).getObjId() + "," + sp.getNCMName() + "] will not be sent to web. Metadata: " + 
 								Config.getProperty("noweb.metadata.group") + "." +  Config.getProperty("noweb.metadata.field") + 
 								"=" + value + ".");
 							return false;	// not meant for web
@@ -118,7 +120,7 @@ public class PackageWebHandler {
 			}
 		}
 		
-		logger.debug("Package [" + getObjIdFromPK(sp.getPK()) + "," + sp.getNCMName() + "] ok for web. Metadata: " + 
+		logger.debug("Package [" + ((NCMObjectPK)sp.getPK()).getObjId() + "," + sp.getNCMName() + "] ok for web. Metadata: " + 
 				Config.getProperty("noweb.metadata.group") + "." +  Config.getProperty("noweb.metadata.field") + 
 				" is not set.");
 		return true;	// meant for web 
@@ -149,13 +151,13 @@ public class PackageWebHandler {
     		String levelRegex = nl.item(i).getTextContent().toUpperCase();
     		levelRegex = "^" + levelRegex + ".*";
     		if (levelPath.matches(levelRegex)) {
-				logger.debug("Package [" + getObjIdFromPK(sp.getPK()) + "," + sp.getNCMName() + "] ok for web." + 
+				logger.debug("Package [" + ((NCMObjectPK)sp.getPK()).getObjId() + "," + sp.getNCMName() + "] ok for web." + 
 					" Package level is configured for web export. Level=" + levelPath);     			
     			return true; // package is an export level
     		}
     	}		
 		
-		logger.debug("Package [" + getObjIdFromPK(sp.getPK()) + "," + sp.getNCMName() + "] will not be sent to web." +
+		logger.debug("Package [" + ((NCMObjectPK)sp.getPK()).getObjId() + "," + sp.getNCMName() + "] will not be sent to web." +
 				" Package level is not configured for web export. Level=" + levelPath);
 		return false; // package not on an export level
 	}	
@@ -185,7 +187,7 @@ public class PackageWebHandler {
 			objProps.setIncludeVariants(true);
 			
 			for (int i = 0; i < childPKs.length; i++ ) {
-				NCMObjectPK childPK = new NCMObjectPK(getObjIdFromPK(childPKs[i]));
+				NCMObjectPK childPK = new NCMObjectPK(((NCMObjectPK)childPKs[i]).getObjId());
 				NCMObjectValueClient child = (NCMObjectValueClient) ds.getNode(childPK, objProps);		
 				
 				// get captions (DID object type) in the master channel
@@ -197,7 +199,7 @@ public class PackageWebHandler {
 			for (int i = 0; i < captions.size(); i++) {
 				NCMObjectValueClient cap = captions.get(i);
 							
-				logger.debug("handleCaptions: Caption [" + getObjIdFromPK(cap.getPK()) + "," + cap.getNCMName() + "]");
+				logger.debug("handleCaptions: Caption [" + ((NCMObjectPK)cap.getPK()).getObjId() + "," + cap.getNCMName() + "]");
 				NCMObjectJournal objJournal = new NCMObjectJournal();
 				String sourceVarStr;				
 				
@@ -226,7 +228,7 @@ public class PackageWebHandler {
 				
 				// delete destination variant objects
 				for (int j = 0; j < destVars.size(); j++) {
-					logger.debug("handleCaptions: Delete [" + getObjIdFromPK(destVars.get(j).getPK()) + "," + destVars.get(j).getNCMName() + "] " + 
+					logger.debug("handleCaptions: Delete [" + ((NCMObjectPK)destVars.get(j).getPK()).getObjId() + "," + destVars.get(j).getNCMName() + "] " + 
 						destVarName + " variant.");
 					objMgr.deleteNode(destVars.get(j).getPK());
 				}
@@ -244,7 +246,7 @@ public class PackageWebHandler {
 					sourceIdx = 0; 	// use the first one (just making sure something will be copied)
 				}
 				
-				logger.debug("handleCaptions: Copy [" + getObjIdFromPK(sourceVars.get(sourceIdx).getPK()) + "," + sourceVars.get(sourceIdx).getNCMName() + "] " + 
+				logger.debug("handleCaptions: Copy [" + ((NCMObjectPK)sourceVars.get(sourceIdx).getPK()).getObjId() + "," + sourceVars.get(sourceIdx).getNCMName() + "] " + 
 					sourceVarStr + " to " + destVarName + " variant.");
 				objMgr.copyAsVariant((INodeValue) sourceVars.get(sourceIdx).getValue(), destVarType, (Journal) objJournal);
 				
@@ -272,7 +274,7 @@ public class PackageWebHandler {
 			objProps.setIncludeMetadataGroups(new Vector<String>());		
 			
 			for (int i = 0; i < childPKs.length; i++ ) {
-				NCMObjectPK childPK = new NCMObjectPK(getObjIdFromPK(childPKs[i]));
+				NCMObjectPK childPK = new NCMObjectPK(((NCMObjectPK)childPKs[i]).getObjId());
 				NCMObjectValueClient child = (NCMObjectValueClient) ds.getNode(childPK, objProps);
 
 				// check only if child element is in the master channel 
@@ -314,7 +316,7 @@ public class PackageWebHandler {
 	
 	private void setMetadata(NCMObjectValueClient objVC, String metaGroup, String metaField, String metaValue) {
 		String objName = objVC.getNCMName();
-		Integer objId = getObjIdFromPK(objVC.getPK());
+		Integer objId = ((NCMObjectPK)objVC.getPK()).getObjId();
 		logger.debug("setMetadata: Object [" + objId.toString() + "," + objName + "," + Integer.toString(objVC.getType()) + "]" +
 			", Meta=" + metaGroup + "." + metaField + ", Value=" + metaValue);
 		
@@ -368,7 +370,7 @@ public class PackageWebHandler {
 				spLocked = true;
 			}
 			catch (Exception e) {
-				logger.error("changeStatus: Unable to lock package [" + getObjIdFromPK(sp.getPK()) + "," + sp.getNCMName() + 
+				logger.error("changeStatus: Unable to lock package [" + ((NCMObjectPK)sp.getPK()).getObjId() + "," + sp.getNCMName() + 
 					"]. Cannot update status.");
 				e.printStackTrace();
 			}
@@ -381,11 +383,11 @@ public class PackageWebHandler {
 				sp.changeStatus(sp.getPK(), newStatusValue, curStatus.getExtStatus().shortValue(), 
 					curStatus.getComplexStatus().intValue(), curStatus.getAttribute().shortValue(), 
 					new short[0]);
-				logger.debug("changeStatus: Updated status of package [" + getObjIdFromPK(sp.getPK()) + "," + sp.getNCMName() +
+				logger.debug("changeStatus: Updated status of package [" + ((NCMObjectPK)sp.getPK()).getObjId() + "," + sp.getNCMName() +
 					"]. New status=" + Short.toString(newStatusValue));
 			}	
 		} catch(Exception e) {
-			logger.error("changeStatus: Error encountered while changing status of package [" + getObjIdFromPK(sp.getPK()) + "," + sp.getNCMName() + "].");			
+			logger.error("changeStatus: Error encountered while changing status of package [" + ((NCMObjectPK)sp.getPK()).getObjId() + "," + sp.getNCMName() + "].");			
 			e.printStackTrace();
 		} finally {
 			try {
@@ -393,7 +395,7 @@ public class PackageWebHandler {
 					sp.unlock(false);	// unlock
 				}				
 			} catch(Exception e) {
-				logger.error("changeStatus: Error encountered while unlocking package [" + getObjIdFromPK(sp.getPK()) + "," + sp.getNCMName() + "].");					
+				logger.error("changeStatus: Error encountered while unlocking package [" + ((NCMObjectPK)sp.getPK()).getObjId() + "," + sp.getNCMName() + "].");					
 				e.printStackTrace();
 			}
 		}
